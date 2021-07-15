@@ -33,9 +33,9 @@ import (
 	"crypto/sha512"
 	"errors"
 	"fmt"
+	"golang.org/x/crypto/pbkdf2"
 	"strconv"
 	"strings"
-	"golang.org/x/crypto/pbkdf2"
 )
 
 //
@@ -72,12 +72,12 @@ var (
 	ErrChecksum = errors.New("The checksum of the mnemonic is not valid")
 
 	// Helper map for checking words number validity
-	wordsNumMap = map[int]bool {
-		WordsNum12 : true,
-		WordsNum15 : true,
-		WordsNum18 : true,
-		WordsNum21 : true,
-		WordsNum24 : true,
+	wordsNumMap = map[int]bool{
+		WordsNum12: true,
+		WordsNum15: true,
+		WordsNum18: true,
+		WordsNum21: true,
+		WordsNum24: true,
 	}
 )
 
@@ -135,21 +135,21 @@ func MnemonicFromEntropy(entropy []byte) (*Mnemonic, error) {
 	// Split binary string in groups of 11-bit and map them to the words list
 	for i := 0; i < mnemonicLen; i++ {
 		// Get current word binary string
-		wordStrBin := mnemonicBinStr[i * wordBitLen: (i + 1) * wordBitLen]
+		wordStrBin := mnemonicBinStr[i*wordBitLen : (i+1)*wordBitLen]
 		// Convert to integer
 		wordIdx, _ := strconv.ParseInt(wordStrBin, 2, 16)
 		// Append the correspondent word
 		mnemonic = append(mnemonic, wordsListEn[wordIdx])
 	}
 
-	return &Mnemonic {
+	return &Mnemonic{
 		Words: strings.Join(mnemonic, " "),
 	}, nil
 }
 
 // Create mnemonic object from a mnemonic string.
-func MnemonicFromString(mnemonic string) (*Mnemonic) {
-	return &Mnemonic {
+func MnemonicFromString(mnemonic string) *Mnemonic {
+	return &Mnemonic{
 		Words: mnemonic,
 	}
 }
