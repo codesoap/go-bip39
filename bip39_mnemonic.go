@@ -18,15 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-//
 // This file cointains mnemonic generation/validation for bip39 package.
-//
 
 package bip39
 
-//
-// Imports
-//
 import (
 	"bytes"
 	"crypto/sha256"
@@ -38,9 +33,6 @@ import (
 	"strings"
 )
 
-//
-// Constants
-//
 const (
 	// Words number
 	WordsNum12 = 12
@@ -60,9 +52,6 @@ const (
 	seedPbkdf2Round = 2048
 )
 
-//
-// Variables
-//
 var (
 	// ErrWordsNum is returned when trying to generate mnemonic with invalid words number
 	ErrWordsNum = errors.New("The specified words number is not valid for mnemonic generation")
@@ -81,18 +70,10 @@ var (
 	}
 )
 
-//
-// Types
-//
-
 // Structure for mnemonic
 type Mnemonic struct {
 	Words string
 }
-
-//
-// Exported functions
-//
 
 // Generate mnemonic from the specified words number.
 // A random entropy is used for generating mnemonic.
@@ -218,10 +199,6 @@ func (mnemonic *Mnemonic) GenerateSeed(passphrase string) ([]byte, error) {
 	// Generate seed
 	return pbkdf2.Key([]byte(mnemonic.Words), []byte(salt), seedPbkdf2Round, seedPbkdf2KeyLen, sha512.New), nil
 }
-
-//
-// Not-exported functions
-//
 
 // Validate the specified words number.
 func validateWordsNum(wordsNum int) error {

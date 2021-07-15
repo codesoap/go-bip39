@@ -18,15 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-//
 // This file cointains some utility functions for bip39 package.
-//
 
 package bip39
 
-//
-// Imports
-//
 import (
 	"bytes"
 	"errors"
@@ -35,17 +30,10 @@ import (
 	"strconv"
 )
 
-//
-// Variables
-//
 var (
 	// ErrBinaryString is returned when trying to convert an invalid binary string to byte slice
 	ErrBinaryString = errors.New("The specified binary string is not valid")
 )
-
-//
-// Not-exported functions
-//
 
 // Convert the specified byte slice to a binary string.
 func bytesToBinaryString(slice []byte) string {

@@ -20,18 +20,11 @@
 
 package bip39
 
-//
-// Imports
-//
 import (
 	"encoding/hex"
 	"strings"
 	"testing"
 )
-
-//
-// Types
-//
 
 // Test vector entry structure
 type testVectEntry struct {
@@ -46,17 +39,10 @@ type testVectInvalidMnemonicEntry struct {
 	Err      error
 }
 
-//
-// Constants
-//
 const (
 	// Passphrase for ssed generation
 	testPassphrase = "TREZOR"
 )
-
-//
-// Variables
-//
 
 // Tests from BIP-0039 page:
 // https://github.com/trezor/python-mnemonic/blob/master/vectors.json
@@ -260,10 +246,6 @@ var testBinaryStringInvalid = []string{
 	"0000a001",
 	"0000000100b00001",
 }
-
-//
-// Functions
-//
 
 // Test vector
 func TestVector(t *testing.T) {
