@@ -18,8 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// This file cointains entropy generation functions for bip39 package.
-
 package bip39
 
 import (
@@ -28,7 +26,6 @@ import (
 )
 
 const (
-	// Entropy bit lengths
 	EntropyBits128 = 128
 	EntropyBits160 = 160
 	EntropyBits192 = 192
@@ -37,10 +34,8 @@ const (
 )
 
 var (
-	// ErrEntropyBitLen is returned when trying to generate entropy with invalid bit length
 	ErrEntropyBitLen = errors.New("The specified bit length is not valid for entropy generation")
 
-	// Helper map for checking bit length validity
 	entropyBitLenMap = map[int]bool{
 		EntropyBits128: true,
 		EntropyBits160: true,
@@ -52,13 +47,11 @@ var (
 
 // Generate entropy bytes with the specified bit length.
 func GenerateEntropy(bitLen int) ([]byte, error) {
-	// Validate bit length
 	err := validateEntropyBitLen(bitLen)
 	if err != nil {
 		return nil, err
 	}
 
-	// Generate random entropy
 	entropy := make([]byte, bitLen/8)
 	_, err = rand.Read(entropy)
 	return entropy, err

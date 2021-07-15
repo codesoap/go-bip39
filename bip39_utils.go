@@ -18,8 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// This file cointains some utility functions for bip39 package.
-
 package bip39
 
 import (
@@ -31,13 +29,11 @@ import (
 )
 
 var (
-	// ErrBinaryString is returned when trying to convert an invalid binary string to byte slice
 	ErrBinaryString = errors.New("The specified binary string is not valid")
 )
 
 // Convert the specified byte slice to a binary string.
 func bytesToBinaryString(slice []byte) string {
-	// Convert each byte to its bits representation as string
 	var strBuff bytes.Buffer
 	for _, b := range slice {
 		strBuff.WriteString(fmt.Sprintf("%.8b", b))
@@ -48,24 +44,18 @@ func bytesToBinaryString(slice []byte) string {
 
 // Convert the specified binary string to a byte slice.
 func binaryStringToBytes(binStr string) ([]byte, error) {
-	// Length of the binary string shall be multiple of 8
 	if (len(binStr) % 8) != 0 {
 		return nil, ErrBinaryString
 	}
 
-	// Create slice
 	slice := make([]byte, 0, len(binStr)/8)
 
-	// Split the string into groups of 8-bit and convert each of them to byte
 	for i := 0; i < len(binStr); i += 8 {
-		// Convert current byte
 		byteStrBin := binStr[i : i+8]
 		byteVal, err := strconv.ParseInt(byteStrBin, 2, 16)
-		// Stop if conversion error
 		if err != nil {
 			return nil, err
 		}
-		// Append new byte
 		slice = append(slice, byte(byteVal))
 	}
 

@@ -40,7 +40,6 @@ type testVectInvalidMnemonicEntry struct {
 }
 
 const (
-	// Passphrase for ssed generation
 	testPassphrase = "TREZOR"
 )
 
@@ -218,17 +217,14 @@ var testVectEntropyBitLenInvalid = []int{
 
 // Tests for invalid mnemonic
 var testVectMnemonicInvalid = []testVectInvalidMnemonicEntry{
-	// Invalid length
 	{
 		Mnemonic: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
 		Err:      ErrWordsNum,
 	},
-	// Invalid checksum
 	{
 		Mnemonic: "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon any",
 		Err:      ErrChecksum,
 	},
-	// Not-existent word
 	{
 		Mnemonic: "abandon abandon abandon notexistent abandon abandon abandon abandon abandon abandon abandon about",
 		Err:      ErrInvalidWord,
@@ -250,10 +246,8 @@ var testBinaryStringInvalid = []string{
 // Test vector
 func TestVector(t *testing.T) {
 	for _, currTest := range testVect {
-		// Convert entropy to bytes
 		entropy, _ := hex.DecodeString(currTest.Entropy)
 
-		// Create mnemonic from entropy
 		mnemonic, err := MnemonicFromEntropy(entropy)
 		if err != nil {
 			t.Errorf("Mnemonic from entropy %s returned error: %s", currTest.Entropy, err.Error())
@@ -261,19 +255,16 @@ func TestVector(t *testing.T) {
 			t.Errorf("Mnemonic from entropy was incorrect: expected %s, got: %s", currTest.Mnemonic, mnemonic.Words)
 		}
 
-		// Validate mnemonic
 		err = mnemonic.Validate()
 		if err != nil {
 			t.Errorf("Mnemonic '%s' validation returned error: %s", currTest.Mnemonic, err.Error())
 		}
 
-		// Check if mnemonic is valid
 		is_valid := mnemonic.IsValid()
 		if !is_valid {
 			t.Errorf("Mnemonic '%s' is not valid", currTest.Mnemonic)
 		}
 
-		// Get entropy back from mnemonic
 		got_entropy, err := mnemonic.ToEntropy()
 		got_entropy_hex := hex.EncodeToString(got_entropy)
 		if err != nil {
@@ -282,7 +273,6 @@ func TestVector(t *testing.T) {
 			t.Errorf("Mnemonic '%s' to entropy was incorrect: expected %s, got: %s", currTest.Mnemonic, currTest.Entropy, got_entropy_hex)
 		}
 
-		// Generate seed from mnemonic
 		seed, err := mnemonic.GenerateSeed(testPassphrase)
 		seed_hex := hex.EncodeToString(seed)
 		if err != nil {
@@ -291,7 +281,6 @@ func TestVector(t *testing.T) {
 			t.Errorf("Mnemonic '%s' seed generation was incorrect: expected %s, got: %s", currTest.Mnemonic, currTest.Seed, seed_hex)
 		}
 
-		// Create mnemonic from string
 		mnemonic = MnemonicFromString(currTest.Mnemonic)
 		if mnemonic.Words != currTest.Mnemonic {
 			t.Errorf("Mnemonic from string was incorrect: expected %s, got: %s", currTest.Mnemonic, mnemonic.Words)
@@ -302,9 +291,7 @@ func TestVector(t *testing.T) {
 // Test valid words number
 func TestWordsNumValid(t *testing.T) {
 	for _, testWordsNum := range testVectWordsNumValid {
-		// Create mnemonic from words number
 		mnemonic, err := MnemonicFromWordsNum(testWordsNum)
-		// Check the number of words in the generated mnemonic
 		gotWordsNum := len(strings.Split(mnemonic.Words, " "))
 		if gotWordsNum != testWordsNum {
 			t.Errorf("Mnemonic from valid words number was incorrect: expected %d, got: %d", testWordsNum, gotWordsNum)
@@ -318,9 +305,7 @@ func TestWordsNumValid(t *testing.T) {
 // Test invalid words number
 func TestWordsNumInvalid(t *testing.T) {
 	for _, testWordsNum := range testVectWordsNumInvalid {
-		// Create mnemonic from words number
 		mnemonic, err := MnemonicFromWordsNum(testWordsNum)
-		// Generated mnemonic shall be nil and error shall be not nil
 		if mnemonic != nil {
 			t.Errorf("Mnemonic from invalid words number (%d) was not nil", testWordsNum)
 		}
@@ -333,10 +318,8 @@ func TestWordsNumInvalid(t *testing.T) {
 // Test valid entropy bit lengths
 func TestEntropyBitLenValid(t *testing.T) {
 	for _, testBitLen := range testVectEntropyBitLenValid {
-		// Generate entropy
 		entropy, err := GenerateEntropy(testBitLen)
 		gotBitLen := len(entropy) * 8
-		// Check the length of the generated entropy
 		if gotBitLen != testBitLen {
 			t.Errorf("Entropy from valid bit length was incorrect: expected %d, got: %d", testBitLen, gotBitLen)
 		}
@@ -349,9 +332,7 @@ func TestEntropyBitLenValid(t *testing.T) {
 // Test invalid entropy bit lengths
 func TestEntropyBitLenInvalid(t *testing.T) {
 	for _, testBitLen := range testVectEntropyBitLenInvalid {
-		// Generate entropy
 		entropy, err := GenerateEntropy(testBitLen)
-		// Generated entropy shall be nil and error shall be not nil
 		if entropy != nil {
 			t.Errorf("Entropy from invalid bit length (%d) was not nil", testBitLen)
 		}
@@ -362,9 +343,7 @@ func TestEntropyBitLenInvalid(t *testing.T) {
 		// Construct a dummy entropy slice with invalid length
 		// Subtract 8 because, otherwise, dividing by 8 could result in a correct byte length
 		entropy = make([]byte, 0, (testBitLen-8)/8)
-		// Do the same test for creating a mnemonic from entropy
 		mnemonic, err := MnemonicFromEntropy(entropy)
-		// Generated mnemonic shall be nil and error shall be not nil
 		if mnemonic != nil {
 			t.Errorf("Mnemonic from invalid entropy bit length (%d) was not nil", testBitLen)
 		}
@@ -377,17 +356,13 @@ func TestEntropyBitLenInvalid(t *testing.T) {
 // Test invalid mnemonics
 func TestMnemonicInvalid(t *testing.T) {
 	for _, testEntry := range testVectMnemonicInvalid {
-		// Create mnemonic from string
 		mnemonic := MnemonicFromString(testEntry.Mnemonic)
-		// Validate mnemonic, shall return error
 		err := mnemonic.Validate()
 		if err != testEntry.Err {
 			t.Errorf("Invalid mnemonic '%s' validation returned wrong error (%s)", testEntry.Mnemonic, err.Error())
 		}
 
-		// Get entropy back from mnemonic
 		entropy, err := mnemonic.ToEntropy()
-		// Generated entropy shall be nil and error shall be not nil
 		if entropy != nil {
 			t.Errorf("Entropy from invalid mnemonic (%s) was not nil", testEntry.Mnemonic)
 		}
@@ -395,9 +370,7 @@ func TestMnemonicInvalid(t *testing.T) {
 			t.Errorf("Entropy from invalid mnemonic (%s) returned wrong error (%s)", testEntry.Mnemonic, err.Error())
 		}
 
-		// Generate seed from mnemonic
 		seed, err := mnemonic.GenerateSeed(testPassphrase)
-		// Generated seed shall be nil and error shall be not nil
 		if seed != nil {
 			t.Errorf("Seed from invalid mnemonic (%s) was not nil", testEntry.Mnemonic)
 		}
@@ -411,9 +384,7 @@ func TestMnemonicInvalid(t *testing.T) {
 // Valid strings are implicitly tested in the test vector
 func TestBinaryStringInvalid(t *testing.T) {
 	for _, testBinStr := range testBinaryStringInvalid {
-		// Convert binary string to bytes
 		slice, err := binaryStringToBytes(testBinStr)
-		// Byte slice shall be nil and error shall be not nil
 		if slice != nil {
 			t.Errorf("Invalid binary string (%s) conversion byte slice was not nil", testBinStr)
 		}
